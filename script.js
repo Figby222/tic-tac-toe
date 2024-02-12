@@ -3,6 +3,7 @@ const Gameboard = (function () {
     const rows = 3;
     const columns = 3;
     let currentTurn;
+    let availableCells;
 
     for (let row = 0; row < rows; row++) {
         board[row] = [];
@@ -23,26 +24,31 @@ const Gameboard = (function () {
         currentTurn = player;
     }
 
+    const getAvailableCells = () => {
+        availableCells = board;
+        availableCells = availableCells.map((row, index) => {
+            let newRow = row.filter((cell, index) => !(cell instanceof Cell));
+            console.log(newRow);
+            return newRow;
+        });
+        console.table(availableCells);
+    }
+
     return {
         getBoard,
         addMarker,
         getTurn,
         changeTurn,
+        getAvailableCells,
     }
 })();
 
 function Cell() {
     this.marker;
-
-    const setMark = (player) => this.marker = player;
-
-    const getMark = () => marker;
-
-    // return {
-    //     setMark,
-    //     getMark
-    // }
 }
+
+Cell.prototype.setMark = (player) => this.marker = player;
+Cell.prototype.getMark = () => marker;
 
 function Player(name, marker) {
     this.name = name;
@@ -59,7 +65,8 @@ function playRound(player) {
     }
 
     Gameboard.addMarker(currentCell[0], currentCell[1]);
-    console.table(Gameboard.getBoard());
+    // console.table(Gameboard.getBoard());
+    console.table(Gameboard.getAvailableCells());
     
 }
 
@@ -70,7 +77,7 @@ const Controller = (function () {
     Gameboard.changeTurn(playerX);
 
     while (true)
-        {playRound(Gameboard.currentTurn);
+        {playRound(Gameboard.getTurn());
 
         if (Gameboard.getTurn() == playerX) {
             Gameboard.changeTurn(playerO);
