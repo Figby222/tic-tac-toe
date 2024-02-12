@@ -47,6 +47,92 @@ const Gameboard = (function () {
                 return false;
         }
     }
+
+    const checkWin = () => {
+        const winRowX = board.some((row) => {
+            return row.every((column) => column == "X");
+        });
+
+        const winRowO = board.some((row) => {
+            return row.every((column) => column == "O");
+        });
+
+        const winColumnX = (function () {
+            for (let column = 0; column < 3; column++) {
+                if (board.every((row) => row[column] == "X")) {
+                    return true;
+                }
+            }
+            return false;
+        })();
+
+        const winColumnO = (function() {
+            for (let column = 0; column < 3; column++) {
+                if (board.every((row) => row[column] == "O")) {
+                    return true;
+                }
+            }
+            return false;
+        })();
+
+        // const winDiagonalTopX = (function () {
+        //     for (let row = 0; row < 3; row++) {
+        //         if (board.every((column) => ))
+        //     }
+        // })();
+
+
+
+        // const winColumnX = board.some((column) => {
+        //     console.log("debug");
+        //     return board.every((row) => {
+        //         console.log(row[column]);
+        //         return row[column] == "X";
+        //     });
+        // });
+            
+
+        // const winColumnX = 
+        //     board.every((row) => {
+        //         return row[0] == "X";
+        //     }) ? true :
+        //     board.every((row) => {
+        //         return row[1] == "X";
+        //     }) ? true:
+        //     board.every((row) => {
+        //         return row[2] == "X";
+        //     }) ? true :
+        //     false;
+
+        // let column0 = false;
+        //     if (
+        //         board[0][2] == "X" &&
+        //         board[1][2] == "X" &&
+        //         board[2][2] == "X"
+        //     ) {
+        //         column0 = true;
+        //     } else {
+        //         column0 = false;
+        //     }
+        // let row0 =
+        //     (board[0].every("X")) ? true :
+        //     (board[0].every("Y")) ? true :
+        //     false;
+        // let row1;
+        // let row2
+
+        if (winRowX) {
+            return "X";
+        } else if (winRowO) {
+            return "O";
+        } else if (winColumnX) {
+            return "X"
+        } else if (winColumnO) {
+            return "O"
+        } else {
+            return false;
+        }
+    }
     
 
     return {
@@ -55,6 +141,7 @@ const Gameboard = (function () {
         getTurn,
         changeTurn,
         checkCellAvailability,
+        checkWin,
         // getAvailableCells,
     }
 })();
@@ -82,6 +169,7 @@ function playRound(player) {
 
     Gameboard.addMarker(currentCell[0], currentCell[1]);
     console.table(Gameboard.getBoard());
+    console.log("Winner: ", Gameboard.checkWin());
 }
 
 const Controller = (function () {
