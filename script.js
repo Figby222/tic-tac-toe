@@ -34,12 +34,28 @@ const Gameboard = (function () {
         console.table(availableCells);
     }
 
+    const checkCellAvailability = (xPos, yPos) => {
+        if(
+            (board[xPos][yPos] instanceof Cell) &&
+            (xPos <= 2 && xPos >= 0) &&
+            (yPos <= 2 && yPos >= 0) &&
+            !(isNaN(xPos)) &&
+            !(isNaN(yPos))
+        ) {
+                return true;
+        } else {
+                return false;
+        }
+    }
+    
+
     return {
         getBoard,
         addMarker,
         getTurn,
         changeTurn,
-        getAvailableCells,
+        checkCellAvailability,
+        // getAvailableCells,
     }
 })();
 
@@ -59,15 +75,13 @@ function playRound(player) {
     let currentCell = prompt("Choose a cell to mark");
     currentCell = currentCell.split(" ");
 
-    while ((currentCell[0] > 2 || currentCell[0] < 0) || (currentCell[1] > 2 || currentCell[1] < 0) || isNaN(currentCell[0]) || isNaN(currentCell[1])) {
-        currentCell = prompt("Choose a proper cell");
-        currentCell.split(" ");
+    while (!(Gameboard.checkCellAvailability(currentCell[0], currentCell[1]))) {
+        currentCell = prompt("Choose a different cell");
+        currentCell = currentCell.split(" ");
     }
 
     Gameboard.addMarker(currentCell[0], currentCell[1]);
-    // console.table(Gameboard.getBoard());
-    console.table(Gameboard.getAvailableCells());
-    
+    console.table(Gameboard.getBoard());
 }
 
 const Controller = (function () {
