@@ -2,9 +2,13 @@ const Gameboard = (function () {
     let board = [];
     const rows = 3;
     const columns = 3;
-    let currentTurn;
-    let availableCells;
+    let currentTurn = 1;
+    let players = [];
+    // let availableCells;
 
+    const addPlayer = (player) => {
+        players.push(player);
+    }
     const setBoard = function() { 
         for (let row = 0; row < rows; row++) {
             board[row] = [];
@@ -17,24 +21,24 @@ const Gameboard = (function () {
     const getBoard = () => board;
 
     const addMarker = (x, y) => {
-        board[x][y] = currentTurn.marker;
+        board[x][y] = getTurn().marker;
     }
     
-    const getTurn = () => currentTurn;
+    const getTurn = () => players[currentTurn % 2];
 
-    const changeTurn = (player) => {
-        currentTurn = player;
+    const changeTurn = () => {
+        currentTurn++;
     }
 
-    const getAvailableCells = () => {
-        availableCells = board;
-        availableCells = availableCells.map((row, index) => {
-            let newRow = row.filter((cell, index) => !(cell instanceof Cell));
-            console.log(newRow);
-            return newRow;
-        });
-        console.table(availableCells);
-    }
+    // const getAvailableCells = () => {
+    //     availableCells = board;
+    //     availableCells = availableCells.map((row, index) => {
+    //         let newRow = row.filter((cell, index) => !(cell instanceof Cell));
+    //         console.log(newRow);
+    //         return newRow;
+    //     });
+    //     console.table(availableCells);
+    // }
 
     const checkCellAvailability = (xPos, yPos) => {
         if(
@@ -161,24 +165,31 @@ const Gameboard = (function () {
         // let row1;
         // let row2
 
-        if (winRow("X")) {
-            return "X";
-        } else if (winRow("O")) {
-            return "O";
-        } else if (winColumn("X")) {
-            return "X"
-        } else if (winColumn("O")) {
-            return "O"
-        } else if (winDiagonal("X")) {
-            return "X"
-        } else if (winDiagonal("O")) {
-            return "O" 
+        if (winRow(players[0].marker)) {
+            players[0].wins++;
+            return players[0].marker;
+        } else if (winRow(players[1].marker)) {
+            players[1].wins++;
+            return players[1].marker;
+        } else if (winColumn(players[0].marker)) {
+            players[0].wins++;
+            return players[0].marker;
+        } else if (winColumn(players[1].marker)) {
+            players[1].wins++;
+            return players[1].marker;
+        } else if (winDiagonal(players[0].marker)) {
+            players[0].wins++;
+            return players[0].marker;
+        } else if (winDiagonal(players[1].marker)) {
+            players[1].wins++;
+            return players[1].marker; 
         } else {
             return false;
         }
     }
 
     return {
+        addPlayer,
         setBoard,
         getBoard,
         addMarker,
@@ -200,9 +211,12 @@ Cell.prototype.getMark = () => marker;
 function Player(name, marker) {
     this.name = name;
     this.marker = marker;
+    this.wins = 0;
+    Gameboard.addPlayer(this);
 }
 
 function playRound(player) {
+    console.log(player);
     let currentCell = prompt("Choose a cell to mark");
     currentCell = currentCell.split(" ");
 
@@ -220,8 +234,6 @@ const Controller = (function () {
     const playerX = new Player("Player One", "X");
     const playerO = new Player("Player Two", "O");
     
-    Gameboard.changeTurn(playerX);
-    
     let newGame = true;
     while(newGame) {
         Gameboard.setBoard();
@@ -229,11 +241,7 @@ const Controller = (function () {
         while (!Gameboard.checkWin())
             {playRound(Gameboard.getTurn());
 
-            if (Gameboard.getTurn() == playerX) {
-                Gameboard.changeTurn(playerO);
-            } else {
-                Gameboard.changeTurn(playerX);
-            }
+            Gameboard.changeTurn();
         }
 
         newGame = confirm("Would you like to start a new game?", false);
