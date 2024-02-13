@@ -49,13 +49,15 @@ const Gameboard = (function () {
     }
 
     const checkWin = () => {
-        const winRowX = board.some((row) => {
-            return row.every((column) => column == "X");
-        });
+        const winRow = function (playerMarker) {
+            return board.some((row) => {
+                return row.every((column) => column == playerMarker);
+            });
+        };
 
-        const winRowO = board.some((row) => {
-            return row.every((column) => column == "O");
-        });
+        // const winRowO = board.some((row) => {
+        //     return row.every((column) => column == "O");
+        // });
 
         // const winColumnX = function (playerMarker) {
         //     for (let column = 0; column < 3; column++) {
@@ -157,9 +159,9 @@ const Gameboard = (function () {
         // let row1;
         // let row2
 
-        if (winRowX) {
+        if (winRow("X")) {
             return "X";
-        } else if (winRowO) {
+        } else if (winRow("O")) {
             return "O";
         } else if (winColumn("A")) {
             return "X"
