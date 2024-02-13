@@ -6,14 +6,7 @@ const Gameboard = (function () {
     let players = [];
     const grid = document.querySelector('.grid-container')
 
-    const populateCells = () => {
-        grid.textContent = "";
-        board.forEach((row) => {
-            row.forEach((cell) => {
-                cell.createNode();
-            })
-        })  
-    }
+    const getGrid = () => grid;
 
     const addGridNode = (node) => {
         grid.appendChild(node);
@@ -29,7 +22,6 @@ const Gameboard = (function () {
                 board[row].push(new Cell());
             }
         }
-        populateCells();
     };
 
     const getBoard = () => board;
@@ -156,8 +148,8 @@ const Gameboard = (function () {
     }
 
     return {
+        getGrid,
         addGridNode,
-        populateCells,
         addPlayer,
         setBoard,
         getBoard,
@@ -202,22 +194,13 @@ function Player(name, marker) {
 
 function playRound() {
     Gameboard.setBoard();
-    // while (!Gameboard.checkWin()) {
-        // let currentCell = prompt("Choose a cell to mark");
-        // currentCell = currentCell.split(" ");
 
-        // while (!(Gameboard.checkCellAvailability(currentCell[0], currentCell[1]))) {
-        //     currentCell = prompt("Choose a different cell");
-        //     currentCell = currentCell.split(" ");
-        // }
-
-        // Gameboard.addMarker(currentCell[0], currentCell[1]);
-        // console.table(Gameboard.getBoard());
-        // console.log("Winner: ", Gameboard.checkWin());
-        // const win = document.querySelector(".win");
-        // win.textContent = "Winner: " + Gameboard.checkWin();
-        // Gameboard.changeTurn();
-    // }
+    Gameboard.getGrid().textContent = "";
+        Gameboard.getBoard().forEach((row) => {
+            row.forEach((cell) => {
+                cell.createNode();
+            })
+        }) 
 }
 
 const Controller = (function () {
