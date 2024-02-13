@@ -5,13 +5,15 @@ const Gameboard = (function () {
     let currentTurn;
     let availableCells;
 
-    for (let row = 0; row < rows; row++) {
-        board[row] = [];
-        for (let column = 0; column < columns; column++) {
-            board[row].push(new Cell());
+    const setBoard = function() { 
+        for (let row = 0; row < rows; row++) {
+            board[row] = [];
+            for (let column = 0; column < columns; column++) {
+                board[row].push(new Cell());
+            }
         }
-    }
-    
+    };
+
     const getBoard = () => board;
 
     const addMarker = (x, y) => {
@@ -175,9 +177,9 @@ const Gameboard = (function () {
             return false;
         }
     }
-    
 
     return {
+        setBoard,
         getBoard,
         addMarker,
         getTurn,
@@ -219,17 +221,23 @@ const Controller = (function () {
     const playerO = new Player("Player Two", "O");
     
     Gameboard.changeTurn(playerX);
+    
+    let newGame = true;
+    while(newGame) {
+        Gameboard.setBoard();
 
-    while (true)
-        {playRound(Gameboard.getTurn());
+        while (!Gameboard.checkWin())
+            {playRound(Gameboard.getTurn());
 
-        if (Gameboard.getTurn() == playerX) {
-            Gameboard.changeTurn(playerO);
-        } else {
-            Gameboard.changeTurn(playerX);
+            if (Gameboard.getTurn() == playerX) {
+                Gameboard.changeTurn(playerO);
+            } else {
+                Gameboard.changeTurn(playerX);
+            }
         }
-    }
 
+        newGame = confirm("Would you like to start a new game?", false);
+    }
     return {
         playerX,
         playerO,
