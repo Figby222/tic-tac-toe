@@ -193,20 +193,28 @@ function Player(name, marker) {
 }
 
 function playRound() {
-    Gameboard.setBoard();
+    setGame();
+    function setGame() {
+        Gameboard.setBoard();
 
-    Gameboard.getGrid().textContent = "";
-        Gameboard.getBoard().forEach((row) => {
-            row.forEach((cell) => {
-                cell.createNode();
-            })
-        }) 
+        Gameboard.getGrid().textContent = "";
+            Gameboard.getBoard().forEach((row) => {
+                row.forEach((cell) => {
+                    cell.createNode();
+                })
+            }) 
+    }
+    const reset = document.querySelector('.reset');
+
+    reset.addEventListener('click', setGame);
+    
 }
 
 const Controller = (function () {
     const playerX = new Player("Player One", "X");
     const playerO = new Player("Player Two", "O");
     console.log("hi");
+    
     
     playRound();
     let newGame = true;
