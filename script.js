@@ -58,19 +58,6 @@ const Gameboard = (function () {
             });
         };
 
-        // const winRowO = board.some((row) => {
-        //     return row.every((column) => column == "O");
-        // });
-
-        // const winColumnX = function (playerMarker) {
-        //     for (let column = 0; column < 3; column++) {
-        //         if (board.every((row) => row[column] == playerMarker)) {
-        //             return true;
-        //         }
-        //     }
-        //     return false;
-        // };
-
         const winColumn = function(playerMarker) {
             for (let column = 0; column < 3; column++) {
                 if (board.every((row) => row[column].marker == playerMarker)) {
@@ -142,7 +129,6 @@ const Gameboard = (function () {
         } else if (checkDraw()) {
             return "Draw" 
         } else {
-            console.log(board[0][0]);
             return false;
         }
     }
@@ -217,12 +203,6 @@ const Controller = (function () {
     
     
     playRound();
-    let newGame = true;
-    // while(newGame) {
-    //     playRound();
-
-    //     newGame = confirm("Would you like to start a new game?", false);
-    // }
     return {
         playerX,
         playerO,
