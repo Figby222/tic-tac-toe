@@ -215,19 +215,21 @@ function Player(name, marker) {
     Gameboard.addPlayer(this);
 }
 
-function playRound(player) {
-    console.log(player);
-    let currentCell = prompt("Choose a cell to mark");
-    currentCell = currentCell.split(" ");
-
-    while (!(Gameboard.checkCellAvailability(currentCell[0], currentCell[1]))) {
-        currentCell = prompt("Choose a different cell");
+function playRound() {
+    while (!Gameboard.checkWin()) {
+        let currentCell = prompt("Choose a cell to mark");
         currentCell = currentCell.split(" ");
-    }
 
-    Gameboard.addMarker(currentCell[0], currentCell[1]);
-    console.table(Gameboard.getBoard());
-    console.log("Winner: ", Gameboard.checkWin());
+        while (!(Gameboard.checkCellAvailability(currentCell[0], currentCell[1]))) {
+            currentCell = prompt("Choose a different cell");
+            currentCell = currentCell.split(" ");
+        }
+
+        Gameboard.addMarker(currentCell[0], currentCell[1]);
+        console.table(Gameboard.getBoard());
+        console.log("Winner: ", Gameboard.checkWin());
+        Gameboard.changeTurn();
+    }
 }
 
 const Controller = (function () {
@@ -238,11 +240,7 @@ const Controller = (function () {
     while(newGame) {
         Gameboard.setBoard();
 
-        while (!Gameboard.checkWin())
-            {playRound(Gameboard.getTurn());
-
-            Gameboard.changeTurn();
-        }
+        playRound();
 
         newGame = confirm("Would you like to start a new game?", false);
     }
