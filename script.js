@@ -165,7 +165,7 @@ const Gameboard = (function () {
             return "X";
         } else if (winRow("O")) {
             return "O";
-        } else if (winColumn("A")) {
+        } else if (winColumn("X")) {
             return "X"
         } else if (winColumn("O")) {
             return "O"
