@@ -4,7 +4,20 @@ const Gameboard = (function () {
     const columns = 3;
     let currentTurn = 1;
     let players = [];
-    // let availableCells;
+    const grid = document.querySelector('.grid-container')
+
+    const populateCells = () => {
+        grid.textContent = "";
+        board.forEach((row) => {
+            row.forEach((cell) => {
+                cell.createNode();
+            })
+        })  
+    }
+
+    const addGridNode = (node) => {
+        grid.appendChild(node);
+    }
 
     const addPlayer = (player) => {
         players.push(player);
@@ -16,12 +29,13 @@ const Gameboard = (function () {
                 board[row].push(new Cell());
             }
         }
+        populateCells();
     };
 
     const getBoard = () => board;
 
     const addMarker = (x, y) => {
-        board[x][y] = getTurn().marker;
+        board[x][y].setMark(getTurn());
     }
     
     const getTurn = () => players[currentTurn % 2];
@@ -30,19 +44,10 @@ const Gameboard = (function () {
         currentTurn++;
     }
 
-    // const getAvailableCells = () => {
-    //     availableCells = board;
-    //     availableCells = availableCells.map((row, index) => {
-    //         let newRow = row.filter((cell, index) => !(cell instanceof Cell));
-    //         console.log(newRow);
-    //         return newRow;
-    //     });
-    //     console.table(availableCells);
-    // }
 
     const checkCellAvailability = (xPos, yPos) => {
         if(
-            (board[xPos][yPos] instanceof Cell) &&
+            (!board[xPos][yPos].marker) &&
             (xPos <= 2 && xPos >= 0) &&
             (yPos <= 2 && yPos >= 0) &&
             !(isNaN(xPos)) &&
@@ -57,7 +62,7 @@ const Gameboard = (function () {
     const checkWin = () => {
         const winRow = function (playerMarker) {
             return board.some((row) => {
-                return row.every((column) => column == playerMarker);
+                return row.every((column) => column.marker == playerMarker);
             });
         };
 
@@ -76,7 +81,7 @@ const Gameboard = (function () {
 
         const winColumn = function(playerMarker) {
             for (let column = 0; column < 3; column++) {
-                if (board.every((row) => row[column] == playerMarker)) {
+                if (board.every((row) => row[column].marker == playerMarker)) {
                     return true;
                 }
             }
@@ -89,7 +94,7 @@ const Gameboard = (function () {
             let column = 0;
 
             while(row <= 2 && column <= 2) {
-                if (board[row][column] != playerMarker) {
+                if (board[row][column].marker != playerMarker) {
                     break;
                 }
                 
@@ -104,9 +109,8 @@ const Gameboard = (function () {
             //bottom start
             row = 0;
             column = 2;
-            
             while (row <= 2 && column >= 0) {
-                if (board[row][column] != playerMarker) {
+                if (board[row][column].marker != playerMarker) {
                     return false;
                 }
 
@@ -121,55 +125,9 @@ const Gameboard = (function () {
 
         const checkDraw = () => {
             return !board.some((row) => {
-                return row.some((column) => column instanceof Cell); 
+                return row.some((column) => !column.marker); 
             });
         }
-
-        // const winDiagonalTopX = (function () {
-        //     for (let row = 0; row < 3; row++) {
-        //         if (board.every((column) => ))
-        //     }
-        // })();
-
-
-
-        // const winColumnX = board.some((column) => {
-        //     console.log("debug");
-        //     return board.every((row) => {
-        //         console.log(row[column]);
-        //         return row[column] == "X";
-        //     });
-        // });
-            
-
-        // const winColumnX = 
-        //     board.every((row) => {
-        //         return row[0] == "X";
-        //     }) ? true :
-        //     board.every((row) => {
-        //         return row[1] == "X";
-        //     }) ? true:
-        //     board.every((row) => {
-        //         return row[2] == "X";
-        //     }) ? true :
-        //     false;
-
-        // let column0 = false;
-        //     if (
-        //         board[0][2] == "X" &&
-        //         board[1][2] == "X" &&
-        //         board[2][2] == "X"
-        //     ) {
-        //         column0 = true;
-        //     } else {
-        //         column0 = false;
-        //     }
-        // let row0 =
-        //     (board[0].every("X")) ? true :
-        //     (board[0].every("Y")) ? true :
-        //     false;
-        // let row1;
-        // let row2
 
         if (winRow(players[0].marker)) {
             players[0].wins++;
@@ -192,11 +150,14 @@ const Gameboard = (function () {
         } else if (checkDraw()) {
             return "Draw" 
         } else {
+            console.log(board[0][0]);
             return false;
         }
     }
 
     return {
+        addGridNode,
+        populateCells,
         addPlayer,
         setBoard,
         getBoard,
@@ -205,16 +166,32 @@ const Gameboard = (function () {
         changeTurn,
         checkCellAvailability,
         checkWin,
-        // getAvailableCells,
     }
 })();
 
 function Cell() {
     this.marker;
+    this.node;
 }
 
-Cell.prototype.setMark = (player) => this.marker = player;
-Cell.prototype.getMark = () => marker;
+Cell.prototype.setMarker = function (marker) { this.marker = marker; };
+Cell.prototype.getMarker = function () { return this.marker };
+Cell.prototype.setNode = function (node) { this.node = node; }
+Cell.prototype.getNode = function () { return this.node }
+Cell.prototype.createNode = function () {
+    const win = document.querySelector(".win");
+    this.node = document.createElement("div");
+        this.node.classList.add("cell");
+        this.node.addEventListener('click', () => {
+            if (!this.node.textContent) {
+                this.node.textContent = Gameboard.getTurn().marker;
+                this.setMarker(Gameboard.getTurn().marker);
+                Gameboard.changeTurn();
+                win.textContent = "Winner: " + Gameboard.checkWin();
+            }
+        })
+    Gameboard.addGridNode(this.node);
+}
 
 function Player(name, marker) {
     this.name = name;
@@ -225,32 +202,36 @@ function Player(name, marker) {
 
 function playRound() {
     Gameboard.setBoard();
-    while (!Gameboard.checkWin()) {
-        let currentCell = prompt("Choose a cell to mark");
-        currentCell = currentCell.split(" ");
+    // while (!Gameboard.checkWin()) {
+        // let currentCell = prompt("Choose a cell to mark");
+        // currentCell = currentCell.split(" ");
 
-        while (!(Gameboard.checkCellAvailability(currentCell[0], currentCell[1]))) {
-            currentCell = prompt("Choose a different cell");
-            currentCell = currentCell.split(" ");
-        }
+        // while (!(Gameboard.checkCellAvailability(currentCell[0], currentCell[1]))) {
+        //     currentCell = prompt("Choose a different cell");
+        //     currentCell = currentCell.split(" ");
+        // }
 
-        Gameboard.addMarker(currentCell[0], currentCell[1]);
-        console.table(Gameboard.getBoard());
-        console.log("Winner: ", Gameboard.checkWin());
-        Gameboard.changeTurn();
-    }
+        // Gameboard.addMarker(currentCell[0], currentCell[1]);
+        // console.table(Gameboard.getBoard());
+        // console.log("Winner: ", Gameboard.checkWin());
+        // const win = document.querySelector(".win");
+        // win.textContent = "Winner: " + Gameboard.checkWin();
+        // Gameboard.changeTurn();
+    // }
 }
 
 const Controller = (function () {
     const playerX = new Player("Player One", "X");
     const playerO = new Player("Player Two", "O");
+    console.log("hi");
     
+    playRound();
     let newGame = true;
-    while(newGame) {
-        playRound();
+    // while(newGame) {
+    //     playRound();
 
-        newGame = confirm("Would you like to start a new game?", false);
-    }
+    //     newGame = confirm("Would you like to start a new game?", false);
+    // }
     return {
         playerX,
         playerO,
