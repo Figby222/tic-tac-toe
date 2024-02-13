@@ -1,7 +1,6 @@
 .grid-container {
     width: 50vh;
     height: 50vh;
-    padding: 10px;
     background-color: gray;
     display: grid;
     gap: 10px;
