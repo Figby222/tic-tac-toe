@@ -57,23 +57,59 @@ const Gameboard = (function () {
             return row.every((column) => column == "O");
         });
 
-        const winColumnX = (function () {
-            for (let column = 0; column < 3; column++) {
-                if (board.every((row) => row[column] == "X")) {
-                    return true;
-                }
-            }
-            return false;
-        })();
+        // const winColumnX = function (playerMarker) {
+        //     for (let column = 0; column < 3; column++) {
+        //         if (board.every((row) => row[column] == playerMarker)) {
+        //             return true;
+        //         }
+        //     }
+        //     return false;
+        // };
 
-        const winColumnO = (function() {
+        const winColumn = function(playerMarker) {
             for (let column = 0; column < 3; column++) {
-                if (board.every((row) => row[column] == "O")) {
+                if (board.every((row) => row[column] == playerMarker)) {
                     return true;
                 }
             }
             return false;
-        })();
+        };
+
+        const winDiagonal = function(playerMarker) {
+            // top start
+            let row = 0;
+            let column = 0;
+
+            while(row <= 2 && column <= 2) {
+                if (board[row][column] != playerMarker) {
+                    break;
+                }
+                
+
+                if (row == 2 && column == 2) {
+                    return true;
+                }
+                row++;
+                column++;
+            }
+
+            //bottom start
+            row = 0;
+            column = 2;
+            
+            while (row <= 2 && column >= 0) {
+                if (board[row][column] != playerMarker) {
+                    return false;
+                }
+
+                if (row == 2 && column == 0) {
+                    return true;
+                }
+
+                row++;
+                column--;
+            }
+        };
 
         // const winDiagonalTopX = (function () {
         //     for (let row = 0; row < 3; row++) {
@@ -125,10 +161,14 @@ const Gameboard = (function () {
             return "X";
         } else if (winRowO) {
             return "O";
-        } else if (winColumnX) {
+        } else if (winColumn("A")) {
             return "X"
-        } else if (winColumnO) {
+        } else if (winColumn("O")) {
             return "O"
+        } else if (winDiagonal("X")) {
+            return "X"
+        } else if (winDiagonal("O")) {
+            return "O" 
         } else {
             return false;
         }
