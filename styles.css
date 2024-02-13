@@ -4,6 +4,8 @@ body {
     align-content: center;
     text-align: center;
     justify-items: center;
+    padding: 0;
+    margin: 0;
 }
 .grid-container {
     width: 50vh;
