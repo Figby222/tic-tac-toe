@@ -119,6 +119,12 @@ const Gameboard = (function () {
             }
         };
 
+        const checkDraw = () => {
+            return !board.some((row) => {
+                return row.some((column) => column instanceof Cell); 
+            });
+        }
+
         // const winDiagonalTopX = (function () {
         //     for (let row = 0; row < 3; row++) {
         //         if (board.every((column) => ))
@@ -183,6 +189,8 @@ const Gameboard = (function () {
         } else if (winDiagonal(players[1].marker)) {
             players[1].wins++;
             return players[1].marker; 
+        } else if (checkDraw()) {
+            return "Draw" 
         } else {
             return false;
         }
@@ -216,6 +224,7 @@ function Player(name, marker) {
 }
 
 function playRound() {
+    Gameboard.setBoard();
     while (!Gameboard.checkWin()) {
         let currentCell = prompt("Choose a cell to mark");
         currentCell = currentCell.split(" ");
@@ -238,8 +247,6 @@ const Controller = (function () {
     
     let newGame = true;
     while(newGame) {
-        Gameboard.setBoard();
-
         playRound();
 
         newGame = confirm("Would you like to start a new game?", false);
